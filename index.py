@@ -14,12 +14,18 @@ def abrir_patron(url_patron:str):
 
 
 def obtener_informacion():
+    # Nombre
+    nombre = driver.find_element(By.CSS_SELECTOR, ".title").text
+    nombre = f"### {nombre}"
+    ### A third-level heading
     # Proposito
     proposito = driver.find_element(By.CSS_SELECTOR, ".intent > p").text
+    proposito = f"*{proposito}*"
     # Aplicabilidad
     usos = driver.find_elements(By.CSS_SELECTOR, ".applicability-problem > p")
-    aplicabilidad = list(map((lambda uso: uso.text), usos))
-    return aplicabilidad, proposito
+    usos = list(map((lambda uso: uso.text), usos))
+    aplicabilidad = list(map((lambda uso: f"1. {uso}"), usos))
+    return [nombre, proposito, *aplicabilidad]
 
 
 def iterar_info(pat, args):
@@ -30,7 +36,7 @@ def iterar_info(pat, args):
 
 def agregar_patron(*args):
     if len(args) == 1: args = args[0]
-    with open("patrones.txt", "a+", encoding='utf8') as pat:
+    with open("patrones.md", "a+", encoding='utf8') as pat:
         iterar_info(pat, args)
 
 
@@ -43,7 +49,7 @@ def trabajar_patron(url_patron:str):
     abrir_patron(url_patron)
     informacion = obtener_informacion()
     agregar_patron(*informacion)
-    with open("patrones.txt", "a+", encoding="utf-8") as pat:
+    with open("patrones.md", "a+", encoding="utf-8") as pat:
         pat.writelines("\n")
     cerrar_patron()
 
